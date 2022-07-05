@@ -624,13 +624,12 @@ end subroutine one_rev
 subroutine simu_rev
    use var_global, only : N_campo,Hi,Bx,By,mx,my,ModB,y,Nmssf
    implicit none
-   integer :: i,try,N,j
+   integer :: i,try,N
    real(8) :: dM
 
    dM = 360.0d0/real(N_campo)
    N = N_campo/Nmssf
 
-   j = 0
    do i = 1,N_campo
       try = 1
       Hi(:) = Bx(i)*mx(:) + By(i)*my(:)
@@ -655,8 +654,6 @@ subroutine simu_rev
 
       call flush()
    end do
-
-   print*, j
 
 end subroutine simu_rev
 

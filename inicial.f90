@@ -76,6 +76,8 @@ subroutine unit_cel
 
 end subroutine unit_cel
 
+! Abre os diretórios de saída dos arquivos
+
 subroutine diretorios(tipo,nx,ny,cont,theta)
     use var_inicial, only : dir2
     implicit none
@@ -99,6 +101,8 @@ subroutine diretorios(tipo,nx,ny,cont,theta)
     end if
     return
 end subroutine diretorios
+
+! Cria a rede na configuração Kagome
 
 subroutine kagome
     use var_inicial, only : a,pi,nx,ny,Ns,rx,ry,mx,my,Lx,Ly,cor,dir2,theta
@@ -159,6 +163,8 @@ subroutine kagome
     return
 end subroutine kagome
 
+! Cria a rede na configuração Triangular (Mesma coisa da kagome com theta = 90º)
+
 subroutine triangular
     use var_inicial, only : a,pi,nx,ny,Ns,rx,ry,mx,my,Lx,Ly,cor,dir2,theta
     implicit none
@@ -217,6 +223,8 @@ subroutine triangular
     return
 end subroutine triangular
 
+! Cria a rede Quadrada
+
 subroutine quadrada
     use var_inicial, only : a,nx,ny,Ns,rx,ry,mx,my,Lx,Ly,cor,dir2,theta,pi
     implicit none
@@ -268,6 +276,8 @@ subroutine quadrada
     return
 end subroutine quadrada
 
+! Salva as posições e versores das nanoilhas e as posições dos vértices
+
 subroutine config
     use var_inicial!, only : Ns,rx,ry,mx,my,cor,dir2
     implicit none
@@ -303,6 +313,8 @@ subroutine config
 
     return
 end subroutine config
+
+! Calcula a matriz Aij sem contorno
 
 subroutine Aij_sem_contorno_x
     use var_inicial, only : Ns,N_viz,rx,ry,mx,my,rc,dir2
@@ -345,6 +357,8 @@ subroutine Aij_sem_contorno_x
 
     return
 end subroutine Aij_sem_contorno_x
+
+! Calcula a matriz Aij com contorno
 
 subroutine Aij_com_contorno_x
     use var_inicial, only : Ns,N_viz,rx,ry,mx,my,Lx,Ly,rc,dir2,Aij
@@ -408,6 +422,8 @@ subroutine Aij_com_contorno_x
     return
 end subroutine Aij_com_contorno_x
 
+! Calcula as posições dos vértices triangulares
+
 subroutine vertice_T
     use var_inicial, only : Ns,nx,ny,N_T,N_svt,xT,yT,a,Lx,Ly,pi,dir2,rx,ry,mx,my
     implicit none
@@ -470,6 +486,8 @@ subroutine vertice_T
     return
 
 end subroutine vertice_T
+
+! Calcula as posições dos vértices kagome
 
 subroutine vertice_K
     use var_inicial, only : Ns,nx,ny,N_k,N_svk,xk,yk,a,Lx,Ly,pi,dir2,rx,ry,mx,my
@@ -539,6 +557,8 @@ subroutine vertice_K
 
 end subroutine vertice_K
 
+! Salva em arquivo
+
 subroutine output
     use var_inicial
     implicit none
@@ -583,6 +603,8 @@ subroutine output
         print*, 'Erro em N_K e N_T',N_K,N_T
     end if
 end subroutine output
+
+! Programa Principal
 
 program inicial_v2
     use var_inicial

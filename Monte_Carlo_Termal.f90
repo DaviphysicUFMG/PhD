@@ -1,4 +1,6 @@
 
+! Gerador MARSAGLIA de números pseudo-aleatórios
+
 module ranmod1
    integer,parameter::i4b=selected_int_kind(9)
    integer,parameter::k15=selected_int_kind(15)
@@ -160,6 +162,8 @@ module var_annealing
    integer, parameter :: iunit_conf = 10, iunit_en = 20, iunit_fin = 30
 end module var_annealing
 
+
+
 subroutine inicial
    use var_annealing, only : N_temp,Ti,Tf,dT,iunit_en
    implicit none
@@ -232,6 +236,8 @@ subroutine ler_input(iunit)
    return
 end subroutine ler_input
 
+! Lê as configurações e define os S's iniciais
+
 subroutine ler_config(iunit)
    use ranutil
    use var_annealing, only : Ns,S,rx,ry,mx,my,IniCon
@@ -268,6 +274,8 @@ subroutine ler_config(iunit)
    return
 end subroutine ler_config
 
+! Lê a matriz Aij e os índices dos spins interagentes
+
 subroutine ler_Aij(iunit)
    use var_annealing, only : N_viz,Aij,jviz,D
    implicit none
@@ -286,6 +294,8 @@ subroutine ler_Aij(iunit)
    return
 end subroutine ler_Aij
 
+! Lê os Nviz's
+
 subroutine ler_Nviz(iunit)
    use var_annealing, only : Ns,Nviz
    implicit none
@@ -303,6 +313,8 @@ subroutine ler_Nviz(iunit)
 
    return
 end subroutine ler_Nviz
+
+! Lê a posição dos vértices
 
 subroutine ler_Vertices(iunit)
    use var_annealing, only : N_skt,Sk,Vk,Rk,St,Vt,Rt
@@ -338,6 +350,8 @@ subroutine ler_Vertices(iunit)
    return
 end subroutine ler_Vertices
 
+! Inicia o vetor Bi
+
 subroutine inicia_Bi
    use var_annealing, only : Ns,Nviz,jviz,Aij,Bi,S,E_tot
    implicit none
@@ -358,6 +372,8 @@ subroutine inicia_Bi
 
    return
 end subroutine inicia_Bi
+
+! Abre os diretórios de Resultados
 
 subroutine diretorios
    use var_annealing
@@ -390,6 +406,8 @@ subroutine diretorios
    return
 end subroutine diretorios
 
+! Atualiza os Bi's, S's e a Energia total
+
 subroutine update(i,dE)
    use var_annealing, only : Nviz,jviz,Aij,Bi,S,E_tot
    implicit none
@@ -410,6 +428,8 @@ subroutine update(i,dE)
    return
 end subroutine update
 
+! Realiza N_mc's passos de Monte Carlo modificados ( Single spin flip e Worm)
+
 subroutine Monte_Carlo()
    use var_annealing, only : N_mc,N_mssf,beta,iunit_conf,iunit_en,N_sin,N_kago,N_tri,temp
    implicit none
@@ -419,6 +439,8 @@ subroutine Monte_Carlo()
    beta = 1.0d0/temp
 
    kmc = 0
+
+   ! Termaliza
 
    do imc = 1,N_mc
       do smc = 1,N_sin
@@ -430,19 +452,12 @@ subroutine Monte_Carlo()
       do tmc = 1,N_tri
          call worm_t
       end do
-      !if (mod(imc,Nkag).eq.0) then
-      !   kmc = kmc + 1
-      !   call worm_k
-      !end if
-      !if (mod(imc,Ntri).eq.0) then
-      !   kmc = kmc + 1
-      !   call worm_t
-      !end if
    end do
 
-   ! Amostragem !
    call config_S(iunit_conf,0)
    call En_save(iunit_en,1)
+
+   ! Amostras
 
    do imc = 1,N_mc
       do smc = 1,N_sin
@@ -461,31 +476,12 @@ subroutine Monte_Carlo()
       end if
    end do
 
-   ! kmc = 0
-   ! do imc = 1,N_single
-   !    kmc = kmc + 1
-   !    call metropolis
-   !    call samples(temps)
-   !    if (mod(imc,Nkag).eq.0) then
-   !       kmc = kmc + 1
-   !       call worm_k
-   !       call samples(temps)
-   !    end if
-   !    !if (mod(imc,Ntri).eq.0) then
-   !    !   kmc = kmc + 1
-   !    !   call worm_t
-   !    !   call samples(temps)
-   !    !end if
-   !    if (mod(kmc,N_mssf).eq.0) then
-   !       call config_S(iunit_conf,1)
-   !    end if
-   !    call flush()
-   ! end do
-
    call config_S(iunit_conf,3)
     
    return
 end subroutine Monte_Carlo
+
+! Algoritmo de Metropolis para Single Spin Flip
 
 subroutine metropolis
    use var_annealing, only : Ns,Bi,S,beta
@@ -506,6 +502,8 @@ subroutine metropolis
    return
 end subroutine metropolis
 
+! Salva as energias
+
 subroutine samples()
    use var_annealing, only : iunit_conf,iunit_en
    implicit none
@@ -514,6 +512,8 @@ subroutine samples()
 
    return
 end subroutine samples
+
+! Salva em arquivo os S's em 0 e 1
 
 subroutine config_S(iunit,flag)
    use var_annealing, only : Ns,N_mc,N_mssf,rx,ry,mx,my,S,temp,dir2
@@ -549,6 +549,8 @@ subroutine config_S(iunit,flag)
    return
 end subroutine config_S
 
+! Salva em arquivo as energias
+
 subroutine En_save(iunit,flag)
    use var_annealing, only : Ns,N_mc,N_temp,temp,E_tot,dir2,S,mx,my,isimula
    implicit none
@@ -569,6 +571,8 @@ subroutine En_save(iunit,flag)
    return
 end subroutine En_save
 
+! Salva a configuração final de S's
+
 subroutine Salva_Final
    use var_annealing, only : Ns,S,iunit_fin
    implicit none
@@ -581,6 +585,8 @@ subroutine Salva_Final
    close(iunit_fin)
    return
 end subroutine Salva_Final
+
+! Realiza a simulação para diferentes temperaturas
 
 subroutine Annealing
    use var_annealing, only : N_temp,Ti,dT,temp
@@ -595,6 +601,8 @@ subroutine Annealing
 
    return
 end subroutine Annealing
+
+! Cria loops na rede kagome
 
 subroutine worm_k
    use ranutil
@@ -664,6 +672,8 @@ subroutine worm_k
    return
 end subroutine worm_k
 
+! Cria loops na rede triangular
+
 subroutine worm_T
    use ranutil
    use var_annealing, only : Ns,N_skt,S,St,Vt,Rt
@@ -732,6 +742,8 @@ subroutine worm_T
    return
 end subroutine worm_T
 
+! Remove o "rabo" dos loops
+
 subroutine corta_rabo(N,ivk,s_worm,s_sequ,v_sequ)
    use var_annealing, only : Ns
    implicit none
@@ -751,6 +763,8 @@ subroutine corta_rabo(N,ivk,s_worm,s_sequ,v_sequ)
 
    return
 end subroutine corta_rabo
+
+! Algoritmo de Metropolis para Worm
 
 subroutine metropolis_loop(s_worm)
    use ranutil
@@ -792,6 +806,8 @@ subroutine metropolis_loop(s_worm)
 
    return
 end subroutine metropolis_loop
+
+! Programa principal
 
 program main
    
