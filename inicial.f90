@@ -375,7 +375,7 @@ subroutine Aij_com_contorno_x
     rc = 0.5d0*sqrt(Lx**2 + Ly**2)
     nc = 2
 
-    Jtroca = 13.0d0/2.0d0
+    Jtroca = 50.0d0/2.0d0
 
     do i = 1,Ns
         do ni = -nc,nc

@@ -608,65 +608,67 @@ subroutine worm_k
    use ranutil
    use var_annealing, only : Ns,N_skt,S,Sk,Vk,Rk
    implicit none
-   integer :: i,j
+   integer :: i,j,k
    integer :: iworm, cont
    integer :: v_0,ivk,isk
    integer :: v_worm(N_skt), s_worm(Ns)
    integer :: v_sequ(N_skt), s_sequ(N_skt)
    integer :: pool(3)
    
-   v_worm = 0
-   s_worm = 0
-   v_sequ = 0
-   s_sequ = 0
+   do k = 1,Ns
+      v_worm = 0
+      s_worm = 0
+      v_sequ = 0
+      s_sequ = 0
 
-   v_0 = int(N_skt*ranmar()/3.0d0)+1
-   !i=rand_int(0,100)
-   ivk = v_0
-   v_worm(ivk) = 1
-   v_sequ(1) = ivk
-   iworm = 0
+      v_0 = int(N_skt*ranmar()/3.0d0)+1
+      !i=rand_int(0,100)
+      ivk = v_0
+      v_worm(ivk) = 1
+      v_sequ(1) = ivk
+      iworm = 0
 
-   do while (iworm <= N_skt)
-      iworm = iworm + 1
-      cont = 0
-      pool = 0
+      do while (iworm <= N_skt)
+         iworm = iworm + 1
+         cont = 0
+         pool = 0
 
-      do i = 3*(ivk-1)+1,3*(ivk-1)+3
-         j = Vk(i)
-         if (Rk(i)*S(j) < 0.0d0) then
-            cont = cont + 1
-            pool(cont) = j
+         do i = 3*(ivk-1)+1,3*(ivk-1)+3
+            j = Vk(i)
+            if (Rk(i)*S(j) < 0.0d0) then
+               cont = cont + 1
+               pool(cont) = j
+            end if
+         end do
+
+         if (cont .ne. 0) then
+            isk = pool(int(cont*ranmar())+1)
+            s_worm(isk) = 1
+            s_sequ(iworm) = isk
+         else
+            return
+         end if
+
+         if (Sk(2*(isk-1)+1) .ne. ivk) then
+            ivk = Sk(2*(isk-1)+1)
+         else
+            ivk = Sk(2*(isk-1)+2)
+         end if
+
+         if (v_worm(ivk) .eq. 1) then
+            if (ivk .eq. v_0) then
+               call metropolis_loop(s_worm)
+               return
+            else
+               call corta_rabo(N_skt,ivk,s_worm,s_sequ,v_sequ)
+               call metropolis_loop(s_worm)
+               return
+            end if
+         else
+            v_worm(ivk) = 1
+            v_sequ(iworm+1) = ivk
          end if
       end do
-
-      if (cont .ne. 0) then
-         isk = pool(int(cont*ranmar())+1)
-         s_worm(isk) = 1
-         s_sequ(iworm) = isk
-      else
-         return
-      end if
-
-      if (Sk(2*(isk-1)+1) .ne. ivk) then
-         ivk = Sk(2*(isk-1)+1)
-      else
-         ivk = Sk(2*(isk-1)+2)
-      end if
-
-      if (v_worm(ivk) .eq. 1) then
-         if (ivk .eq. v_0) then
-            call metropolis_loop(s_worm)
-            return
-         else
-            call corta_rabo(N_skt,ivk,s_worm,s_sequ,v_sequ)
-            call metropolis_loop(s_worm)
-            return
-         end if
-      else
-         v_worm(ivk) = 1
-         v_sequ(iworm+1) = ivk
-      end if
    end do
 
    return
@@ -678,65 +680,67 @@ subroutine worm_T
    use ranutil
    use var_annealing, only : Ns,N_skt,S,St,Vt,Rt
    implicit none
-   integer :: i,j
+   integer :: i,j,k
    integer :: iworm, cont
    integer :: v_0,ivk,isk
    integer :: v_worm(N_skt), s_worm(Ns)
    integer :: v_sequ(N_skt), s_sequ(N_skt)
    integer :: pool(6)
    
-   v_worm = 0
-   s_worm = 0
-   v_sequ = 0
-   s_sequ = 0
+   do k = 1,Ns
+      v_worm = 0
+      s_worm = 0
+      v_sequ = 0
+      s_sequ = 0
 
-   v_0 = int(N_skt*ranmar()/6.0d0)+1
-   !i=rand_int(0,100)
-   ivk = v_0
-   v_worm(ivk) = 1
-   v_sequ(1) = ivk
-   iworm = 0
+      v_0 = int(N_skt*ranmar()/6.0d0)+1
+      !i=rand_int(0,100)
+      ivk = v_0
+      v_worm(ivk) = 1
+      v_sequ(1) = ivk
+      iworm = 0
 
-   do while (iworm <= N_skt)
-      iworm = iworm + 1
-      cont = 0
-      pool = 0
+      do while (iworm <= N_skt)
+         iworm = iworm + 1
+         cont = 0
+         pool = 0
 
-      do i = 6*(ivk-1)+1,6*(ivk-1)+6
-         j = Vt(i)
-         if (Rt(i)*S(j) < 0.0d0) then
-            cont = cont + 1
-            pool(cont) = j
+         do i = 6*(ivk-1)+1,6*(ivk-1)+6
+            j = Vt(i)
+            if (Rt(i)*S(j) < 0.0d0) then
+               cont = cont + 1
+               pool(cont) = j
+            end if
+         end do
+
+         if (cont .ne. 0) then
+            isk = pool(int(cont*ranmar())+1)
+            s_worm(isk) = 1
+            s_sequ(iworm) = isk
+         else
+            return
+         end if
+
+         if (St(2*(isk-1)+1) .ne. ivk) then
+            ivk = St(2*(isk-1)+1)
+         else
+            ivk = St(2*(isk-1)+2)
+         end if
+
+         if (v_worm(ivk) .eq. 1) then
+            if (ivk .eq. v_0) then
+               call metropolis_loop(s_worm)
+               return
+            else
+               call corta_rabo(N_skt,ivk,s_worm,s_sequ,v_sequ)
+               call metropolis_loop(s_worm)
+               return
+            end if
+         else
+            v_worm(ivk) = 1
+            v_sequ(iworm+1) = ivk
          end if
       end do
-
-      if (cont .ne. 0) then
-         isk = pool(int(cont*ranmar())+1)
-         s_worm(isk) = 1
-         s_sequ(iworm) = isk
-      else
-         return
-      end if
-
-      if (St(2*(isk-1)+1) .ne. ivk) then
-         ivk = St(2*(isk-1)+1)
-      else
-         ivk = St(2*(isk-1)+2)
-      end if
-
-      if (v_worm(ivk) .eq. 1) then
-         if (ivk .eq. v_0) then
-            call metropolis_loop(s_worm)
-            return
-         else
-            call corta_rabo(N_skt,ivk,s_worm,s_sequ,v_sequ)
-            call metropolis_loop(s_worm)
-            return
-         end if
-      else
-         v_worm(ivk) = 1
-         v_sequ(iworm+1) = ivk
-      end if
    end do
 
    return
